@@ -172,7 +172,7 @@ internal_y = internal[:,1].reshape(-1, 1).clone().requires_grad_(True).to(device
 external_x = external[:,0].reshape(-1, 1).clone().requires_grad_(True).to(device)
 external_y = external[:,1].reshape(-1, 1).clone().requires_grad_(True).to(device)
 
-k = k_exact(x_train, y_train)
+q=0.15
 updata_interval = 100
 initial_pseudo_loss_weight = 1
 factor = 0.0001
@@ -203,10 +203,10 @@ for epoch in range(epochs):
             l4, l5, l6 = pinn_net.equation_mse(internal_x, internal_y, k_exact(internal_x, internal_y), mean)
             l4 = l4.squeeze()
             l5 = l5.squeeze()
-            _, mask1 = torch.topk(l1, int(select(0.15, epoch + 1, 25000) * len(l1)), largest=False)
-            _, mask2 = torch.topk(l2, int(select(0.15, epoch + 1, 25000) * len(l2)), largest=False)
-            _, mask3 = torch.topk(l4, int(select(0.15, epoch + 1, 25000) * len(l4)), largest=False)
-            _, mask4 = torch.topk(l5, int(select(0.15, epoch + 1, 25000) * len(l5)), largest=False)
+            _, mask1 = torch.topk(l1, int(select(q, epoch + 1, epochs+lbfgs_epochs) * len(l1)), largest=False)
+            _, mask2 = torch.topk(l2, int(select(q, epoch + 1, epochs+lbfgs_epochs) * len(l2)), largest=False)
+            _, mask3 = torch.topk(l4, int(select(q, epoch + 1, epochs+lbfgs_epochs) * len(l4)), largest=False)
+            _, mask4 = torch.topk(l5, int(select(q, epoch + 1, epochs+lbfgs_epochs) * len(l5)), largest=False)
             # _, mask1 = torch.topk(l1, int(0.15 * len(l1)), largest=False)
             # _, mask2 = torch.topk(l2, int(0.15 * len(l2)), largest=False)
             # _, mask3 = torch.topk(l4, int(0.15 * len(l4)), largest=False)
@@ -253,10 +253,10 @@ for epoch in range(lbfgs_epochs):
         l4, l5, l6 = pinn_net.equation_mse(internal_x, internal_y, k_exact(internal_x, internal_y), mean)
         l4 = l4.squeeze()
         l5 = l5.squeeze()
-        _, mask1 = torch.topk(l1, int(select(0.15, epoch + epochs+1, 25000) * len(l1)), largest=False)
-        _, mask2 = torch.topk(l2, int(select(0.15, epoch + epochs+1, 25000) * len(l2)), largest=False)
-        _, mask3 = torch.topk(l4, int(select(0.15, epoch + epochs+1, 25000) * len(l4)), largest=False)
-        _, mask4 = torch.topk(l5, int(select(0.15, epoch + epochs+1, 25000) * len(l5)), largest=False)
+        _, mask1 = torch.topk(l1, int(select(q, epoch + epochs+1, epochs+lbfgs_epochs) * len(l1)), largest=False)
+        _, mask2 = torch.topk(l2, int(select(q, epoch + epochs+1, epochs+lbfgs_epochs) * len(l2)), largest=False)
+        _, mask3 = torch.topk(l4, int(select(q, epoch + epochs+1, epochs+lbfgs_epochs) * len(l4)), largest=False)
+        _, mask4 = torch.topk(l5, int(select(q, epoch + epochs+1, epochs+lbfgs_epochs) * len(l5)), largest=False)
         # _, mask1 = torch.topk(l1, int(0.15 * len(l1)), largest=False)
         # _, mask2 = torch.topk(l2, int(0.15 * len(l2)), largest=False)
         # _, mask3 = torch.topk(l4, int(0.15 * len(l4)), largest=False)
